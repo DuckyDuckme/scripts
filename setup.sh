@@ -20,7 +20,7 @@ setup() {
     timedatectl set-timezone "$TIMEZONE"
 
     echo 'Updating the keyring'
-    pacman -S archlinux-keyring
+    pacman -S --noconfirm archlinux-keyring
 
     echo 'Creating partitions'
     # creates 200MB swap partition and the rest is root
@@ -35,7 +35,10 @@ setup() {
     swapon /dev/sda1
 
     echo 'Installing base system'
-    pacstrap -K /mnt base linux linux-firmware base-devel
+    pacstrap -K /mnt base linux base-devel
+
+    echo 'Generate fstab'
+    genfstab -U /mnt >> /mnt/etc/fstab
 
     echo 'Chrooting into installed system'
     cp $0 /mnt/setup.sh
@@ -49,7 +52,7 @@ setup() {
         echo 'Unmounting filesystems'
 	umount /mnt
 	swapoff /dev/sda1
-        echo 'Done! Reboot system.'
+        echo 'Done! Now add password for root and ducky'
     fi
 
 }
@@ -61,6 +64,7 @@ configure() {
     echo 'Set hostname and timezone'
     echo "$HOSTNAME" > /etc/hostname
     ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
+    hwclock --systohc
 
     echo 'Set locale'
     echo 'LANG="en_US.UTF-8"' >> /etc/locale.conf
@@ -75,13 +79,9 @@ configure() {
     grub-install --target=i386-pc /dev/sda
     grub-mkconfig -o /boot/grub/grub.cfg
 
-    echo 'Create the root password'
-    set_root_password
-
-    echo 'Create the ducky'
-    create_ducky
-
-    echo 'Configure xorg'
+    echo 'Configure Xorg'
+    Xorg :0 -configure
+    mv /root/xorg.conf.new /etc/X11/xorg.conf
 
 }
 
@@ -93,6 +93,7 @@ install_extra() {
 
     # Development
     packages+=' python rsync vim'
+
     # Internet
     packages+=' firefox openssh wget'
 
@@ -106,10 +107,10 @@ install_extra() {
     #packages+=' ttf
 
     # Misc
-    packages+=' grub'
+    packages+=' grub pkgstats'
 
     # XFCE4
-    packages+=' xfce4 xfce4-goodies'
+    packages+=' xfce4 xfce4-goodies xorg-xinit'
 
     pacman -Sy --noconfirm $packages
 }
