@@ -13,14 +13,14 @@ HOSTNAME='arch-vm'
 TIMEZONE='Europe/Amsterdam'
 
 setup() {
-    local swap="$DRIVE"1
-    local root="$DRIVE"2
-
     echo 'Setting the timezone'
     timedatectl set-timezone "$TIMEZONE"
 
     echo 'Updating the keyring'
     pacman -S --noconfirm archlinux-keyring
+
+    echo 'Ranking the mirrors'
+    update_repos
 
     echo 'Creating partitions'
     # creates 200MB swap partition and the rest is root
@@ -48,93 +48,24 @@ setup() {
     then
         echo 'ERROR: Something failed inside the chroot, not unmounting filesystems so you can investigate.'
         echo 'Make sure you unmount everything before you try to run this script again.'
-    else
-        echo 'Unmounting filesystems'
-	umount /mnt
-	swapoff /dev/sda1
-        echo 'Done! Now add password for root and ducky'
-    fi
 
 }
 
-configure() {
-    echo 'Installing packages'
-    install_extra
+# idk if I should put it here or once we are chrooted
+update_repos() {
+    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+    mkdir /tmp/foo
+    cd /tmp/foo
+    git clone https://aur.archlinux.org/rate-mirrors.git
+    cd rate-mirrors
+    makepkg -sicr --noconfirm
 
-    echo 'Set hostname and timezone'
-    echo "$HOSTNAME" > /etc/hostname
-    ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
-    hwclock --systohc
+    rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
 
-    echo 'Set locale'
-    echo 'LANG="en_US.UTF-8"' >> /etc/locale.conf
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-    locale-gen
-
-    echo 'Configure networkd'
-    echo -e "[Match]\nName=ens33\n\n[Network]\nDHCP=yes" >> /etc/systemd/network/20-wired.network
-    systemctl enable networkd.service resolved.service
-
-    echo 'Configure GRUB'
-    grub-install --target=i386-pc /dev/sda
-    grub-mkconfig -o /boot/grub/grub.cfg
-
-    echo 'Configure Xorg'
-    Xorg :0 -configure
-    mv /root/xorg.conf.new /etc/X11/xorg.conf
-
-}
-
-install_extra() {
-    local packages=''
-
-    # Man pages
-    packages+=' man-db man-pages texinfo'
-
-    # Development
-    packages+=' python rsync vim'
-
-    # Internet
-    packages+=' firefox openssh wget'
-
-    # Files
-    packages+=' sudo doas unzip zip'
-
-    # Xserver
-    packages+=' xorg xf86-video-vmware'
-
-    # Fonts
-    #packages+=' ttf
-
-    # Misc
-    packages+=' grub pkgstats'
-
-    # XFCE4
-    packages+=' xfce4 xfce4-goodies xorg-xinit'
-
-    pacman -Sy --noconfirm $packages
-}
-
-set_root_password() {
-    local password="$1"; shift
-
-    echo -en "$password\n$password" | passwd
-}
-
-create_ducky() {
-    local password="$1"; shift
-
-    useradd -m -G wheel ducky
-    echo -en "$password\n$password" | passwd ducky
 }
 
 # -e option makes it exit if one of the functions fails
 # -x option prints the trace
 set -ex
 
-if [ "$1" == "chroot" ]
-then
-    configure
-else
-    setup
-fi
+setup
