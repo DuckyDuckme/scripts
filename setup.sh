@@ -31,7 +31,7 @@ setup() {
     mkswap /dev/sda1
 
     echo 'Mounting filesystems'
-    mount /dev/sda2
+    mount /dev/sda2 /mnt
     swapon /dev/sda1
 
     echo 'Installing base system'
