@@ -1,15 +1,12 @@
 #!/bin/bash
 #
-# This small script will setup the Arch installation on a virtual machine. It follows the instructions from the 
+# This small script will setup the Arch installation on a VMWare. It follows the instructions from the 
 # Arch Wiki. The arch_install.sh by Tom Wambold is used as a rough template to help me get started.
 
-# The drive we are installing to
 DRIVE='/dev/sda'
 
-# Hostname of the machine
 HOSTNAME='arch-vm'
 
-# Timezone
 TIMEZONE='Europe/Amsterdam'
 
 setup() {
@@ -36,6 +33,9 @@ setup() {
 
     echo 'Generate fstab'
     genfstab -U /mnt >> /mnt/etc/fstab
+
+    echo 'Copying more config to the /mnt in case we want to install more'
+    cp ./chroot.sh /mnt/chroot.sh
 }
 
 # -e option makes it exit if one of the functions fails

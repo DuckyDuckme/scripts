@@ -38,8 +38,9 @@ configure() {
     stty echo
     create_ducky "$DUCKY_PASSWORD"
 
-    echo 'Configure sudoers'
+    echo 'Configure doas and sudo'
     set_sudoers
+    echo "permit persist :wheel" > /etc/doas.conf
 
     #echo 'Setup AUR and update repos'
     #setup_AUR
@@ -191,22 +192,6 @@ root ALL=(ALL) ALL
 EOF
 
     chmod 440 /etc/sudoers
-}
-
-setup_AUR() {
-        cd /home/ducky
-        mkdir AUR
-        update_repos
-}
-
-update_repos() {
-    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-    cd /home/ducky/AUR
-    git clone https://aur.archlinux.org/rate-mirrors.git
-    cd rate-mirrors
-    makepkg -sicr --noconfirm
-
-    rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
 }
 
 # -e option makes it exit if one of the functions fails
