@@ -19,9 +19,6 @@ setup() {
     echo 'Updating the keyring'
     pacman -S --noconfirm archlinux-keyring
 
-    echo 'Ranking the mirrors'
-    update_repos
-
     echo 'Creating partitions'
     # creates 200MB swap partition and the rest is root
     echo -e ',200M,S\n,+,\n' | sfdisk /dev/sda
@@ -39,29 +36,6 @@ setup() {
 
     echo 'Generate fstab'
     genfstab -U /mnt >> /mnt/etc/fstab
-
-    echo 'Chrooting into installed system'
-    cp $0 /mnt/setup.sh
-    arch-chroot /mnt ./setup.sh chroot
-
-    if [ -f /mnt/setup.sh ]
-    then
-        echo 'ERROR: Something failed inside the chroot, not unmounting filesystems so you can investigate.'
-        echo 'Make sure you unmount everything before you try to run this script again.'
-
-}
-
-# idk if I should put it here or once we are chrooted
-update_repos() {
-    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-    mkdir /tmp/foo
-    cd /tmp/foo
-    git clone https://aur.archlinux.org/rate-mirrors.git
-    cd rate-mirrors
-    makepkg -sicr --noconfirm
-
-    rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
-
 }
 
 # -e option makes it exit if one of the functions fails
