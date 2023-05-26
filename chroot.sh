@@ -40,6 +40,10 @@ configure() {
     echo 'Configure sudoers'
     set_sudoers
 
+    echo 'Setup AUR and update repos'
+    setup_AUR
+    update_repos
+
     echo 'Configure Xorg'
     Xorg :0 -configure
     mv /root/xorg.conf.new /etc/X11/xorg.conf
@@ -53,7 +57,7 @@ install_extra() {
     packages+=' man-db man-pages texinfo'
 
     # Development
-    packages+=' python rsync vim'
+    packages+=' python rsync vim git'
 
     # Internet
     packages+=' firefox openssh wget'
@@ -188,6 +192,22 @@ EOF
     chmod 440 /etc/sudoers
 }
 
+setup_AUR() {
+        cd /home/ducky
+        mkdir AUR
+        cd AUR
+        update_repos
+}
+
+update_repos() {
+    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+    cd /home/ducky
+    git clone https://aur.archlinux.org/rate-mirrors.git
+    cd rate-mirrors
+    makepkg -sicr --noconfirm
+
+    rate-mirrors arch | sudo tee /etc/pacman.d/mirrorlist
+}
 
 # -e option makes it exit if one of the functions fails
 # -x option prints the trace
