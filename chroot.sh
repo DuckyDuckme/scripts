@@ -62,7 +62,7 @@ install_extra() {
     packages+=' python rsync vim git'
 
     # Internet
-    packages+=' firefox openssh wget'
+    packages+=' firefox openssh wget curl'
 
     # Files
     packages+=' sudo doas unzip zip'
