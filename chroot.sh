@@ -3,6 +3,7 @@
 configure() {
     local ROOT_PASSWORD=''
     local DUCKY_PASSWORD=''
+    local HOSTNAME='archvm'
 
     echo 'Installing packages'
     install_extra
@@ -19,7 +20,7 @@ configure() {
 
     echo 'Configure networkd'
     echo -e "[Match]\nName=ens33\n\n[Network]\nDHCP=yes" >> /etc/systemd/network/20-wired.network
-    systemctl enable networkd.service resolved.service
+    systemctl enable systemd-networkd.service systemd-resolved.service
 
     echo 'Configure GRUB'
     grub-install --target=i386-pc /dev/sda
@@ -40,9 +41,9 @@ configure() {
     echo 'Configure sudoers'
     set_sudoers
 
-    echo 'Setup AUR and update repos'
-    setup_AUR
-    update_repos
+    #echo 'Setup AUR and update repos'
+    #setup_AUR
+    #update_repos
 
     echo 'Configure Xorg'
     Xorg :0 -configure
@@ -195,13 +196,12 @@ EOF
 setup_AUR() {
         cd /home/ducky
         mkdir AUR
-        cd AUR
         update_repos
 }
 
 update_repos() {
     cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-    cd /home/ducky
+    cd /home/ducky/AUR
     git clone https://aur.archlinux.org/rate-mirrors.git
     cd rate-mirrors
     makepkg -sicr --noconfirm
@@ -214,9 +214,3 @@ update_repos() {
 set -ex
 
 configure
-
-# finally unmount the filesystem and swapoff
-echo 'Unmounting filesystems'
-umount /mnt
-swapoff /dev/sda1
-echo 'Done! Now add password for root and ducky'
