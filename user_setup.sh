@@ -16,7 +16,9 @@ run() {
 }
 setup_AUR() {
         cd "$HOME"
-        mkdir AUR
+	if [[ ! -d AUR ]]; then
+	    mkdir AUR
+	fi
 }
 
 update_repos() {
@@ -30,15 +32,25 @@ update_repos() {
 }
 
 setup_dotfiles() {
-    git clone https://github.com/DuckyDuckme/.dotfiles.git
-    cd .dotfiles
-    chmod +x bootstrap.sh
-    ./bootstrap.sh
+    cd "$HOME"
+    if [[ ! -d .dotfiles ]]; then
+	git clone https://github.com/DuckyDuckme/.dotfiles.git
+	cd .dotfiles
+	chmod +x bootstrap.sh
+	./bootstrap.sh
+    else
+	echo "Folder ``.dotfiles'' already exists."
+    fi
 }
 
 setup_vim() {
     echo 'Installing vim-plug'
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    #vim -c ":PlugInstall"
+    vim -c ":PlugInstall" -c ":qall"
 }
+
+# to exit immiediately if something goes wrong
+set -e
+
+run

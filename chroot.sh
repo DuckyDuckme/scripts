@@ -39,8 +39,7 @@ configure() {
     create_ducky "$DUCKY_PASSWORD"
 
     echo 'Configure doas and sudo'
-    set_sudoers
-    echo "permit persist :wheel" > /etc/doas.conf
+    set_doas
 
     #echo 'Setup AUR and update repos'
     #setup_AUR
@@ -65,7 +64,7 @@ install_extra() {
     packages+=' firefox openssh wget curl'
 
     # Files
-    packages+=' sudo doas unzip zip'
+    packages+=' doas unzip zip'
 
     # Xserver
     packages+=' xorg xf86-video-vmware'
@@ -194,8 +193,10 @@ EOF
     chmod 440 /etc/sudoers
 }
 
+set_doas() {
+    echo "permit persist :wheel\n" > /etc/doas.conf
+    ln -s $(which doas) /usr/bin/sudo
 # -e option makes it exit if one of the functions fails
-# -x option prints the trace
-set -ex
+set -e
 
 configure
