@@ -39,6 +39,7 @@ configure() {
     create_ducky "$DUCKY_PASSWORD"
 
     echo 'Configure doas and sudo'
+    set_sudoers
     set_doas
 
     #echo 'Setup AUR and update repos'
@@ -48,6 +49,9 @@ configure() {
     echo 'Configure Xorg'
     Xorg :0 -configure
     mv /root/xorg.conf.new /etc/X11/xorg.conf
+    rm /root/xorg.conf.new
+
+    echo 'Set up complete, you can reboot now'
 
 }
 
@@ -196,7 +200,6 @@ EOF
 set_doas() {
     echo "permit persist :wheel\n" > /etc/doas.conf
     ln -s $(which doas) /usr/bin/sudo
-# -e option makes it exit if one of the functions fails
-set -e
+}
 
 configure
