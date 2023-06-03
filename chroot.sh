@@ -62,7 +62,7 @@ install_extra() {
     packages+=' man-db man-pages texinfo'
 
     # Development
-    packages+=' python rsync vim git'
+    packages+=' python rsync vim nano neovim git'
 
     # Internet
     packages+=' firefox openssh wget curl'

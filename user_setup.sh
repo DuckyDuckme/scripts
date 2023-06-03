@@ -1,4 +1,5 @@
 #!/bin/bash
+#
 # run this as a user to setup my config
 
 run() {
@@ -11,8 +12,8 @@ run() {
     echo 'Getting the dotfiles'
     setup_dotfiles
 
-    echo 'Setting up vim'
-    setup_vim
+    echo 'Setting up vim and neovim'
+    setup_nvim
 }
 setup_AUR() {
         cd "$HOME"
@@ -43,11 +44,14 @@ setup_dotfiles() {
     fi
 }
 
-setup_vim() {
-    echo 'Installing vim-plug'
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    vim -c ":PlugInstall" -c ":qall"
+setup_nvim() {
+    # At this point neovim should be installed and configured
+    if [[ -d ~/.config/nvim ]]; then
+	ln -s ~/.vimrc ~/.config/nvim/init.vim
+    fi
+
+    # Install all the plugins
+    nvim -es -u init.vim -i NONE -c "PlugInstall" -c "qa"
 }
 
 run

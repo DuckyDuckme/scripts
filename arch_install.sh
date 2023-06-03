@@ -36,6 +36,7 @@ setup() {
 
     echo 'Copying more config to the /mnt in case we want to install more'
     cp ./chroot.sh /mnt/chroot.sh
+    chmod +x /mnt/chroot.sh
 }
 
 # -e option makes it exit if one of the functions fails
