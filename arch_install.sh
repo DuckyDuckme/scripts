@@ -39,7 +39,6 @@ setup() {
 }
 
 # -e option makes it exit if one of the functions fails
-# -x option prints the trace
-set -ex
+set -e
 
 setup
