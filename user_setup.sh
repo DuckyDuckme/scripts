@@ -50,7 +50,4 @@ setup_vim() {
     vim -c ":PlugInstall" -c ":qall"
 }
 
-# to exit immiediately if something goes wrong
-set -e
-
 run
