@@ -17,8 +17,8 @@ setup() {
     pacman -S --noconfirm archlinux-keyring
 
     echo 'Creating partitions'
-    # creates 200MB swap partition and the rest is root
-    echo -e ',200M,S\n,+,\n' | sfdisk /dev/sda
+    # creates 1GB swap partition and the rest is root
+    echo -e ',1G,S\n,+,\n' | sfdisk /dev/sda
 
     echo 'Formatting filesystems'
     mkfs.ext4 /dev/sda2
