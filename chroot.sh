@@ -49,7 +49,6 @@ configure() {
     echo 'Configure Xorg'
     Xorg :0 -configure
     mv /root/xorg.conf.new /etc/X11/xorg.conf
-    rm /root/xorg.conf.new
 
     echo 'Set up complete, you can reboot now'
 
