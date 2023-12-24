@@ -29,7 +29,7 @@ setup() {
     swapon /dev/sda1
 
     echo 'Installing base system'
-    pacstrap -K /mnt base linux base-devel
+    pacstrap /mnt base linux base-devel
 
     echo 'Generate fstab'
     genfstab -U /mnt >> /mnt/etc/fstab
