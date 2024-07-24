@@ -30,15 +30,12 @@ update_repos() {
 }
 
 setup_dotfiles() {
-    cd "$HOME"
-    if [[ ! -d .dotfiles ]]; then
+    if [[ ! -d $HOME/.dotfiles ]]; then
 	git clone https://github.com/DuckyDuckme/.dotfiles.git
-	cd .dotfiles
-	chmod +x bootstrap.sh
-	./bootstrap.sh
-    else
-	echo "Folder ``.dotfiles'' already exists."
     fi
+    cd .dotfiles
+    chmod +x ./bootstrap.sh
+    ./bootstrap.sh
 }
 
 setup_nvim() {
