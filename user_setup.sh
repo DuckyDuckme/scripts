@@ -33,7 +33,7 @@ setup_dotfiles() {
     if [[ ! -d $HOME/.dotfiles ]]; then
 	git clone https://github.com/DuckyDuckme/.dotfiles.git $HOME/.dotfiles
     fi
-    cd .dotfiles
+    cd $HOME/.dotfiles
     chmod +x ./bootstrap.sh
     ./bootstrap.sh
 }
