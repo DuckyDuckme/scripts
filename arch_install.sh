@@ -9,32 +9,35 @@ HOSTNAME='arch-vm'
 
 TIMEZONE='Europe/Amsterdam'
 
+GREEN='\033[0;32m'
+NC='\033[0m'
+
 setup() {
-    echo 'Setting the timezone'
+    echo -e '${GREEN}Setting the timezone'
     timedatectl set-timezone "$TIMEZONE"
 
-    echo 'Updating the keyring'
+    echo -e '${GREEN}Updating the keyring'
     pacman -S --noconfirm archlinux-keyring
 
-    echo 'Creating partitions'
+    echo -e '${GREEN}Creating partitions'
     # creates 1GB swap partition and the rest is root
     echo -e ',1G,S\n,+,\n' | sfdisk /dev/sda
 
-    echo 'Formatting filesystems'
+    echo -e '${GREEN}Formatting filesystems'
     mkfs.ext4 /dev/sda2
     mkswap /dev/sda1
 
-    echo 'Mounting filesystems'
+    echo -e '${GREEN}Mounting filesystems'
     mount /dev/sda2 /mnt
     swapon /dev/sda1
 
-    echo 'Installing base system'
-    pacstrap /mnt base linux base-devel
+    echo -e '${GREEN}Installing base system'
+    pacstrap -K /mnt base linux base-devel
 
-    echo 'Generate fstab'
+    echo -e '${GREEN}Generate fstab'
     genfstab -U /mnt >> /mnt/etc/fstab
 
-    echo 'Copying more config to the /mnt in case we want to install more'
+    echo -e '${GREEN}Copying more config to the /mnt in case we want to install more'
     cp ./chroot.sh /mnt/chroot.sh
     chmod +x /mnt/chroot.sh
 }
