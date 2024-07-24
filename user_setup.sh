@@ -31,7 +31,7 @@ update_repos() {
 
 setup_dotfiles() {
     if [[ ! -d $HOME/.dotfiles ]]; then
-	git clone https://github.com/DuckyDuckme/.dotfiles.git
+	git clone https://github.com/DuckyDuckme/.dotfiles.git $HOME/.dotfiles
     fi
     cd .dotfiles
     chmod +x ./bootstrap.sh
