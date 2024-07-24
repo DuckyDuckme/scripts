@@ -12,14 +12,11 @@ run() {
     echo 'Getting the dotfiles'
     setup_dotfiles
 
-    echo 'Setting up vim and neovim'
-    setup_nvim
+    # echo 'Setting up vim and neovim'
+    # setup_nvim
 }
 setup_AUR() {
-        cd "$HOME"
-	if [[ ! -d AUR ]]; then
-	    mkdir AUR
-	fi
+    mkdir $HOME/AUR
 }
 
 update_repos() {
