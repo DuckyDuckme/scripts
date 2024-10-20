@@ -38,8 +38,8 @@ setup() {
     genfstab -U /mnt >> /mnt/etc/fstab
 
     echo -e '${GREEN}Copying more config to the /mnt in case we want to install more'
-    cp ./chroot.sh /mnt/chroot.sh
-    chmod +x /mnt/chroot.sh
+    cp ./chroot.sh /mnt/tmp/chroot.sh
+    chmod +x /mnt/tmp/chroot.sh
 }
 
 # -e option makes it exit if one of the functions fails
